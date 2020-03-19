@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+PROJECT_ROOT=$(shell pwd)
+REPORT_DIR=$(PROJECT_ROOT)/report
+
+GO_BUID_BASE_DIR=/tmp/go-build
+GO_CACHE_DIR=$(GO_BUID_BASE_DIR)/cache
+GO_HOME_DIR=$(GO_BUID_BASE_DIR)/home
+GO_PROJECT_BASE_DIR=${GO_HOME_DIR}/src/github.com/Shopify
+GO_PROJECT_DIR=${GO_PROJECT_BASE_DIR}/ghostferry
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	make clean
+	make reset-deb-dir
+	# mimic a go build environment with the correct paths. All modules are
+	# vendor'ed
+	mkdir --parent ${GO_PROJECT_BASE_DIR} ${GO_CACHE_DIR}
+	rm --force ${GO_PROJECT_DIR}
+	ln -s ${PROJECT_ROOT} ${GO_PROJECT_DIR}
+	# re-use the deb build process (putting in place proper version strings
+	# automatically) but then copy out the needed files from the build process
+	# to allow using the Lastline build infrastructure
+	cd ${GO_PROJECT_DIR} && \
+	    GOPATH=${GO_HOME_DIR} GOCACHE=${GO_CACHE_DIR} make copydb-deb
+
+override_dh_auto_clean:
+	make clean
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+
+override_dh_auto_test:
+	make clean
+	make reset-deb-dir
+	# mimic a go build environment with the correct paths. All modules are
+	# vendor'ed
+	mkdir --parent ${GO_PROJECT_BASE_DIR} ${GO_CACHE_DIR}
+	rm --force ${GO_PROJECT_DIR}
+	ln -s ${PROJECT_ROOT} ${GO_PROJECT_DIR}
+	cd ${GO_PROJECT_DIR} && \
+	    GOPATH=${GO_HOME_DIR} GOCACHE=${GO_CACHE_DIR} make test
+endif
+
+.PHONY: override_dh_auto_build override_dh_auto_clean override_dh_auto_test

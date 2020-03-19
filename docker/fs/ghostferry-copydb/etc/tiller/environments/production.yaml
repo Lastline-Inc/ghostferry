@@ -1,0 +1,3 @@
+replication-config.json.erb:
+    target: '/etc/lastline/replication-config.json'
+    perms: 0644

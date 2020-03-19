@@ -1,0 +1,39 @@
+deep_merge: true
+defaults:
+    global:
+        config:
+            AllowReplicationFromReplica: true
+            BinlogEventBatchSize: 100
+            CascadingPaginationColumnConfig:
+                FullTableCopies: {}
+            DBReadRetries: 5
+            DBWriteRetries: 5
+            Databases:
+                Whitelist: []
+            DisableCutover: true
+            DumpStateOnSignal: true
+            ForceResumeStateUpdatesToDB: true
+            LockStrategy: 'LockInGhostferry'
+            MyServerId:
+            ReplicateSchemaChanges: true
+            ResumeStateFromDB: '_ghostferry'
+            SkipBinlogRowImageCheck: true
+            Source:
+                Collation: 'utf8mb4_unicode_ci'
+                Host:
+                Params:
+                    charset: 'utf8mb4'
+                Pass:
+                Port: 3306
+                User:
+            Target:
+                Collation: 'utf8mb4_unicode_ci'
+                Host:
+                Params:
+                    charset: 'utf8mb4'
+                    # all DB params must be strings
+                    foreign_key_checks: '0'
+                Pass:
+                Port: 3306
+                User:
+            VerifierType: 'NoVerification'

@@ -1,0 +1,66 @@
+version: "3.4"
+
+# example how to replicate the "pcloud" and "metadata" DBs from an on-premises appliance. The
+# former is a real-world example where we will use ghostferry, the latter a very short test
+# that helps validate the setup only (few and very simple DBs)
+services:
+  ghostferry-copydb-metadata:
+    image: '${IMAGE:-gcr.io/lastline-docker-internal-prod/ghostferry-copydb:dev-latest}'
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: 1
+      TILLER_YAML: |
+        ---
+        global:
+          config:
+            CascadingPaginationColumnConfig:
+              FullTableCopies:
+                metadata:
+                  - 'configuration'
+                  - 'db_properties'
+                  - 'entry_admin_info'
+                  - 'entry_summary'
+                  - 'test_entry'
+            Databases:
+              Whitelist:
+                - 'metadata'
+            MyServerId: 10001
+            ResumeStateFromDB: '_ghostferry'
+            Source:
+              Host:
+              Pass:
+              User:
+            Target:
+              Host:
+              Pass:
+              User:
+        ...
+  ghostferry-copydb-pcloud:
+    image: '${IMAGE:-gcr.io/lastline-docker-internal-prod/ghostferry-copydb:dev-latest}'
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: 1
+      TILLER_YAML: |
+        ---
+        global:
+          config:
+            CascadingPaginationColumnConfig:
+              FullTableCopies:
+                pcloud:
+                  - 'db_properties'
+            Databases:
+              Whitelist:
+                - 'pcloud'
+            MyServerId: 10002
+            ResumeStateFromDB: '_ghostferry'
+            Source:
+              Host:
+              Pass:
+              User:
+            Target:
+              Host:
+              Pass:
+              User:
+        ...
