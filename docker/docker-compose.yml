@@ -18,10 +18,6 @@ services:
               FullTableCopies:
                 metadata:
                   - 'configuration'
-                  - 'db_properties'
-                  - 'entry_admin_info'
-                  - 'entry_summary'
-                  - 'test_entry'
             Databases:
               Whitelist:
                 - 'metadata'
@@ -46,10 +42,6 @@ services:
         ---
         global:
           config:
-            CascadingPaginationColumnConfig:
-              FullTableCopies:
-                pcloud:
-                  - 'db_properties'
             Databases:
               Whitelist:
                 - 'pcloud'

@@ -3,7 +3,7 @@ defaults:
     global:
         config:
             AllowReplicationFromReplica: true
-            BinlogEventBatchSize: 100
+            BinlogEventBatchSize: 1000
             CascadingPaginationColumnConfig:
                 FullTableCopies: {}
             DBReadRetries: 5
