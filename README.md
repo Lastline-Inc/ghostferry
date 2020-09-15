@@ -123,6 +123,9 @@ Features/fixes added in this fork include
   this fix has not made it into upstream master yet.
 - support throttling of data migration separately from replication. This allows
   prioritizing the data replication over the copy of old data (or vice-versa).
+- update SQL parser to the latest stable release to work around
+  [issues](https://github.com/pingcap/parser/issues/1017) when parsing
+  schema-changing commands in the binlogs.
 
 Overview of How it Works
 ------------------------

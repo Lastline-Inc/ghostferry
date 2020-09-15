@@ -46,3 +46,12 @@
 [submodule "vendor/github.com/golang/protobuf"]
 	path = vendor/github.com/golang/protobuf
 	url = https://github.com/golang/protobuf.git
+[submodule "vendor/github.com/BurntSushi/toml"]
+	path = vendor/github.com/BurntSushi/toml
+	url = https://github.com/BurntSushi/toml.git
+[submodule "vendor/github.com/danjacques/gofslock"]
+	path = vendor/github.com/danjacques/gofslock
+	url = https://github.com/danjacques/gofslock.git
+[submodule "vendor/github.com/uber/jaeger-client-go"]
+	path = vendor/github.com/uber/jaeger-client-go
+	url = https://github.com/uber/jaeger-client-go.git
