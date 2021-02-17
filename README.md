@@ -91,8 +91,8 @@ Features/fixes added in this fork include
     - database/table name rewrites are not supported, as we would need non-
       trivial rewrites of schema changing statements when tables are altered,
       renamed, created, or deleted.
-    - `GRANT` statements are ignored. These are not part of the schema per-se,
-      but it is still worth pointing out.
+    - `GRANT` and `REVOKE` statements are ignored. These are not part of the
+      schema per-se, but it is still worth pointing out.
     - `CREATE PROCEDURE`, `CREATE FUNCTION`, `DROP PROCEDURE`, and ,
       `DROP FUNCTION` statements are currently not supported and are ignored
       as part of replication. Likewise, functions or procedures defined on the

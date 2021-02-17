@@ -49,6 +49,18 @@ func (this *QueryAnalyzerTestSuite) TestParseGrantStatementWithMetadata() {
 	this.Require().Equal(len(events), 0)
 }
 
+func (this *QueryAnalyzerTestSuite) TestParseRevokeStatement() {
+	events, err := this.QueryAnalyzer.ParseSchemaChanges("REVOKE ALL PRIVILEGES FROM 'username'@'%'", "")
+	this.Require().Nil(err)
+	this.Require().Equal(len(events), 0)
+}
+
+func (this *QueryAnalyzerTestSuite) TestParseRevokeStatementWithGrantOption() {
+	events, err := this.QueryAnalyzer.ParseSchemaChanges("REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'username'@'%'", "")
+	this.Require().Nil(err)
+	this.Require().Equal(len(events), 0)
+}
+
 func TestQueryAnalyzer(t *testing.T) {
 	suite.Run(t, new(QueryAnalyzerTestSuite))
 }

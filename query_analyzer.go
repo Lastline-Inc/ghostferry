@@ -76,7 +76,8 @@ func (q *QueryAnalyzer) ParseSchemaChanges(sqlStatement string, schemaOfStatemen
 		// one is not as easy as grants, as we *do* care about them (they are
 		// part of the schema), but same reasoning: marking this as not supported
 		tokens := strings.SplitN(strings.TrimSpace(sqlStatement), " ", 4)
-		if len(tokens) >= 2 && strings.ToUpper(tokens[0]) == "GRANT" {
+		if len(tokens) >= 2 && (
+				strings.ToUpper(tokens[0]) == "GRANT" || strings.ToUpper(tokens[0]) == "REVOKE") {
 			return schemaEvents, nil
 		}
 		if len(tokens) >= 3 && (
