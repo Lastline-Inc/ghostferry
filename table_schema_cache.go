@@ -369,7 +369,9 @@ func (t *TableSchema) paginationKey(cascadingPaginationColumnConfig *CascadingPa
 	}
 
 	for _, column := range paginationKeyColumns {
-		if column.Type != schema.TYPE_NUMBER && column.Type != schema.TYPE_STRING {
+		switch column.Type {
+		case schema.TYPE_NUMBER, schema.TYPE_STRING, schema.TYPE_VARBINARY, schema.TYPE_BINARY:
+		default:
 			return nil, UnsupportedPaginationKeyError(t.Schema, t.Name, column.Name)
 		}
 	}

@@ -330,6 +330,66 @@ class TypesTest < GhostferryTestCase
     end
   end
 
+  def _test_with_binary_column_type(column_type:, row1_key:, row2_key:)
+    [source_db, target_db].each do |db|
+      db.query("CREATE DATABASE IF NOT EXISTS #{DEFAULT_DB}")
+      db.query("CREATE TABLE IF NOT EXISTS #{DEFAULT_FULL_TABLE_NAME} (id #{column_type} not null, data decimal, primary key(id))")
+    end
+
+    source_db.query("INSERT INTO #{DEFAULT_FULL_TABLE_NAME} (id, data) VALUES (\"#{row1_key}\", 1)")
+
+    ghostferry = new_ghostferry(MINIMAL_GHOSTFERRY)
+
+    row_copy_called = false
+    ghostferry.on_status(Ghostferry::Status::ROW_COPY_COMPLETED) do
+      # this hook follows the design in the helper method
+      # execute_copy_data_in_fixed_size_binary_column below. See detailed
+      # comments there
+      res = target_db.query("SELECT * FROM #{DEFAULT_FULL_TABLE_NAME}")
+      assert_equal 1, res.count
+      res.each do |row|
+        assert_equal row1_key, row["id"]
+        assert_equal 1, row["data"]
+      end
+
+      source_db.query("INSERT INTO #{DEFAULT_FULL_TABLE_NAME} (id, data) VALUES (\"#{row2_key}\", 2)")
+      source_db.query("UPDATE #{DEFAULT_FULL_TABLE_NAME} SET data = 3 WHERE id = \"#{row1_key}\"")
+
+      row_copy_called = true
+    end
+
+    ghostferry.run
+
+    assert row_copy_called
+    assert_test_table_is_identical
+    res = target_db.query("SELECT * FROM #{DEFAULT_FULL_TABLE_NAME}")
+    assert_equal 2, res.count
+    res.each do |row|
+      if row["id"] == row1_key
+        assert_equal 3, row["data"]
+      else
+        assert_equal row2_key, row["id"]
+        assert_equal 2, row["data"]
+      end
+    end
+  end
+
+  def test_binary
+    _test_with_binary_column_type(
+        column_type: "binary(4)",
+        row1_key: "AB\x00\x01".b,
+        row2_key: "AB\x00\x02".b
+    )
+  end
+
+  def test_varbinary
+    _test_with_binary_column_type(
+        column_type: "varbinary(16)",
+        row1_key: "AB\x00\x01CD".b,
+        row2_key: "AB\x00\x02CD".b
+    )
+  end
+
   def test_copy_data_in_fixed_size_binary_column
     # NOTE: We explicitly test with a value that is shorter than the max column
     # size - MySQL will 0-pad the value up the full length of the BINARY column,

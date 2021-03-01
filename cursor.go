@@ -1,6 +1,7 @@
 package ghostferry
 
 import (
+	"bytes"
 	sqlorig "database/sql"
 	"fmt"
 	sql "github.com/Shopify/ghostferry/sqlwrapper"
@@ -62,16 +63,25 @@ func NewPaginationKeyDataFromRow(row RowData, paginationKey *PaginationKey) (pag
 		// NOTE: The data we get from the MySQL driver can be all over the
 		// place, so it's really important we know what we are casting the
 		// value to
+		colIdx :=  paginationKey.ColumnIndices[i]
 		if column.Type == schema.TYPE_NUMBER {
-			value, err := row.GetInt64(paginationKey.ColumnIndices[i])
+			value, err := row.GetInt64(colIdx)
 			if err != nil {
 				return nil, err
 			}
 			values[i] = value
 		} else if column.Type == schema.TYPE_STRING {
-			values[i] = row.GetString(paginationKey.ColumnIndices[i])
+			values[i] = row.GetString(colIdx)
+		} else if column.Type == schema.TYPE_BINARY || column.Type == schema.TYPE_VARBINARY {
+			// we special-case binary/varbinary, as we want to copying them into a
+			// string and directly operate on the byte stream
+			if value, ok := row[colIdx].([]byte); ok {
+				values[i] = value
+			} else {
+				values[i] = row.GetString(colIdx)
+			}
 		} else {
-			value := row[paginationKey.ColumnIndices[i]]
+			value := row[colIdx]
 			return nil, fmt.Errorf("unsupported primary key type %T (%v) in %s", value, value, paginationKey)
 		}
 	}
@@ -129,7 +139,7 @@ func (d PaginationKeyData) String() string {
 
 // for some types of keys, we can estimate the progress of pagination by
 // comparing the most significant part of the key to the target pagination
-// value. It's only a rough esitmate, as it assume a linear distribution of
+// value. It's only a rough estimate, as it assume a linear distribution of
 // values between 0 and the target (no negative values, no holes/jumps, etc)
 // and cannot work for non-integer keys, but it's nevertheless useful
 func (d PaginationKeyData) ProgressData() (progress uint64, exists bool) {
@@ -169,6 +179,15 @@ func (d *PaginationKeyData) Compare(other *PaginationKeyData) int {
 				return -1
 			} else if dValue > otherValue {
 				return 1
+			}
+		} else if bValue, ok := value.([]byte); ok {
+			otherValue, ok := other.Values[i].([]byte)
+			if !ok {
+				panic(fmt.Errorf("comparing incompatible primary key types %T and %T", d.Values[i], other.Values[i]))
+			}
+			cmp := bytes.Compare(bValue, otherValue)
+			if cmp != 0 {
+				return cmp
 			}
 		} else if dValue, ok := value.(string); ok {
 			otherValue, ok := other.Values[i].(string)
