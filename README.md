@@ -105,10 +105,10 @@ Features/fixes added in this fork include
   DB, it is possible to replicate from read-only sources where locking is not
   an option (e.g., cloud-SQL).
 - support [non-int primary keys](https://github.com/Lastline-Inc/ghostferry/issues/24):
-  extend `Ghostferry` to support signed/unsigned integers, string, and
-  composite primary keys (that use ints and strings). This vastly reduces the
-  types of tables for which "full copy" is required.  
-  Additionally support iterating over table rows to copy in descending order.
+  extend `Ghostferry` to support signed/unsigned integers, string,
+  binary/varbinary, and composite primary keys (that use ints and strings).
+  This vastly reduces the types of tables for which "full copy" is required.
+  Additionally, support iterating over table rows to copy in descending order.
   This allows reading recent data first if the pagination key reflects
   chronological data.  
   Note that there are a few restrictions/limitations with this:
