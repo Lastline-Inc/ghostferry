@@ -1,0 +1,13 @@
+Source: ghostferry
+Section: misc
+Priority: optional
+Maintainer: Shuhao Wu <shuhao.wu@shopify.com>
+Build-Depends: debhelper (>= 7.0.0),
+Standards-Version: 3.9.2
+Homepage: http://www.lastline.com
+Vcs-Git: git@gitlab.int.lastline.com:lastline/ghostferry.git
+
+Package: ghostferry-copydb
+Architecture: amd64
+Description: Migrate MySQL data from one server to another
+  without downtime via ghostferry.

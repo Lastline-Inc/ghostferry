@@ -1,0 +1,24 @@
+build-environment:
+    min-builder-version: 3
+
+builds:
+    ghostferry-copydb:
+        stages:
+            base-image:
+                name: 'gcr.io/lastline-docker-internal-prod/llbase'
+                tag: 'release-base.${LL_ARG__DISTRO}'
+            local-debs:
+                packages:
+                    - 'ghostferry-copydb_*.deb'
+            copy-into-docker-root-fs:
+                local-dir: 'docker/fs/ghostferry-copydb'
+            entry-point:
+                command:
+                    - '/entrypoint.sh'
+        hooks:
+            # at this point, there should be no external dependencies for the
+            # deb - skip lengthy setup
+            apt-setup:
+                skip-stage: true
+            apt-cleanup:
+                skip-stage: true

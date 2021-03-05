@@ -1,0 +1,11 @@
+ghostferry (1.1.0-lastline) bionic; urgency=medium
+
+  * Heavily extended version for Lastline needs
+
+ -- Clemens Kolbitsch <kolbitsch@lastline.com>  Thu, 19 Mar 2020 18:57:55 +0000
+
+ghostferry (1.1.0-0) bionic; urgency=medium
+
+  * Upstream version from Shopify / github.com
+
+ -- Shuhao Wu <shuhao.wu@shopify.com>  Thu, 19 Mar 2020 18:50:55 +0000

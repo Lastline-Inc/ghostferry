@@ -1,0 +1,17 @@
+<%
+# we simply render the entire JSON
+require 'json'
+
+if !config['MyServerId']
+    raise "Require MySQL server ID"
+end
+myServerId = config['MyServerId']
+if !myServerId.is_a?(Integer) || myServerId < 1000 || myServerId > 65536
+    raise "Invalid MySQL server ID #{myServerId}: must be an int in 1000-65536"
+end
+
+if config['Databases']['Whitelist'].length == 0
+    raise "Require (non-empty) list of databases to replicate"
+end
+-%>
+<%= JSON.pretty_generate(config) -%>

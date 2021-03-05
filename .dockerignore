@@ -1,0 +1,7 @@
+*.sql
+build
+debian
+log
+pkg
+src
+vendor
